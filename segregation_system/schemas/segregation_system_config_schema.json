@@ -1,0 +1,34 @@
+
+{
+    "type": "object",
+    "properties": {
+      "stage": {
+        "type": "string",
+        "enum": ["store", "balancing", "coverage", "learning"]
+      },
+      "segregation_system_ip": {"type": "string"},
+      "segregation_system_port": {"type": "string"},
+      "development_system_ip": {"type": "string"},
+      "development_system_port": {"type": "string"},
+      "preparation_system_ip": {"type": "string"},
+      "preparation_system_port": {"type": "string"},
+      "db_name": {"type": "string"},
+      "max_sessions": {"type": "number"},
+      "train_set_size":  {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "validation_set_size": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "test_set_size": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "required": ["stage",  "segregation_system_ip", "segregation_system_port", "development_system_ip", "development_system_port", "preparation_system_ip", "preparation_system_port", "db_name", "max_sessions", "train_set_size", "validation_set_size", "test_set_size"]
+  }
