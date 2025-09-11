@@ -47,9 +47,13 @@ class MessageManager:
         print('New Dataset received')
 
     def send_data(self, json):
-        uri = "http://" + self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port) + "/record"
+        #uri = "http://" + self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port) + "/record"
+        ingestion_url = (os.getenv('INGESTION_SERVICE_URL',
+                        self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port)) +
+                        "/record")
+        print(ingestion_url)
         try:
-            res = requests.post(uri, json=json, timeout=3)
+            res = requests.post(ingestion_url, json=json, timeout=3)
             if res.status_code != 200:
                 raise Exception("[ERROR] Not received 200")
         except Exception as e:
