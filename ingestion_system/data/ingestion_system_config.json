@@ -1,9 +1,9 @@
 {
   "operative_mode" : "development",
-  "preparation_system_ip" : "10.8.0.8",
-  "preparation_system_port" : 6004,
-  "evaluation_system_ip": "10.8.0.9",
-  "evaluation_system_port": 6006,
+  "preparation_system_ip" : "preparation-system",
+  "preparation_system_port" : 5000,
+  "evaluation_system_ip": "evaluation-system",
+  "evaluation_system_port": 6008,
   "production_window": 5,
   "evaluation_window": 5,
   "missing_samples_threshold": 1,

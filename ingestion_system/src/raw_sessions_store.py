@@ -24,11 +24,11 @@ class RawSessionsStore:
 
         db_path = os.path.join(os.path.abspath('..'), self.configuration.db_name)
         if os.path.exists(db_path):
-            # print('[+] sqlite3 previous database deleted')
+            print('[+] sqlite3 previous database deleted')
             os.remove(db_path)
 
         if self.open_connection() and self.create_table():
-            # print('[+] sqlite3 connection established and raw_session table initialized')
+            print('[+] sqlite3 connection established and raw_session table initialized')
             pass
         else:
             logging.error('sqlite3 initialize failed')
@@ -94,6 +94,7 @@ class RawSessionsStore:
 
         return True
 
+    # TODO aggiungere print con informazioni/errori
     def get_record_type(self, record: dict) -> str:
         """
         Identifies the record type. The possible ones are calendar, pressure_detected, 
@@ -108,6 +109,7 @@ class RawSessionsStore:
                 return record_type
         return 'None'
 
+    # TODO aggiungere print con informazioni/errori
     def validate_schema_record(self, record: dict, record_type: str) -> bool:
         """
         Validates a received record given a pre-defined schema
@@ -127,7 +129,8 @@ class RawSessionsStore:
 
         except FileNotFoundError:
             logging.error('Failed to open schema path %s', record_type)
-            exit(-1)
+            return False
+            #exit(-1)
 
         return True
 
@@ -152,6 +155,7 @@ class RawSessionsStore:
 
         return True
 
+    # TODO aggiungere print con informazioni/errori
     def store_record(self, record: dict) -> bool:
         """
         Stores the received record into the database after its type identification and validation.
@@ -346,7 +350,7 @@ class RawSessionsStore:
                 # (except for the labels during the production mode)
                 # If all the records are not null, the session can be labeled as 'fully complete'
                 series_columns = str()
-                for i in range(1, 100):
+                for i in range(1, 100): # TODO perché 100?
                     series_columns += ' AND ' + RECORD_TYPE[3] + '_' + str(i) + ' IS NOT NULL '
 
                 query = 'SELECT COUNT(1) FROM raw_session WHERE uuid = ? ' \

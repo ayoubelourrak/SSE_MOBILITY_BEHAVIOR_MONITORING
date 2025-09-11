@@ -41,6 +41,7 @@ class IngestionSystem:
         """
         Runs the Ingestion System main process
         """
+        # TODO i log.info non funzionano metti i print
         logging.info('Operative Mode: %s', self.operative_mode)
 
         # Create an instance of RawSessionsStore
@@ -53,8 +54,10 @@ class IngestionSystem:
         #while JsonIO.get_instance().receive() is False:
         #    time.sleep(3)
         while True:
+            print('waiting for ingestion events')
             # Wait for a new record
             received_record = JsonIO.get_instance().receive()
+            print('received record: {}'.format(received_record))
 
             last_missing_sample = False
             if raw_sessions_store.store_record(record=received_record):
@@ -87,6 +90,7 @@ class IngestionSystem:
                         raw_session = raw_sessions_store.load_raw_session(uuid=uuid)
 
                         if raw_session['uuid'] is None:
+                            # TODO metti un messaggio
                             continue
 
                         # Delete Raw Session from the Data Store
@@ -127,6 +131,7 @@ class IngestionSystem:
                                     self.sessions_to_produce += 1
                                     logging.info('Sessions executed: %s', self.sessions_to_produce)
 
+                                    # TODO sistema le dimensioni del window
                                     if self.sessions_to_produce == self.configuration.production_window:
                                         self.evaluation = True
                                         self.sessions_to_produce = 0
@@ -145,3 +150,4 @@ class IngestionSystem:
                             self.last_uuid_received = None
                 else:
                     self.last_uuid_received = received_record['uuid']
+            print('fine giro')
