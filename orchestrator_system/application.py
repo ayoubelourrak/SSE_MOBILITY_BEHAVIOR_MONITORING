@@ -4,10 +4,9 @@ from dotenv import load_dotenv
 from model.json_validator import JsonValidator
 from utils.json_reader import JsonReader
 from jsonschema import ValidationError
+from config.constants import CONFIG_FILE_PATH
 
 load_dotenv()
-
-CONFIGURATION_FILE_PATH = "./json/orchestrator-configuration.json"
 
 if __name__ == "__main__":
     try:
@@ -16,7 +15,7 @@ if __name__ == "__main__":
         print("[ERROR] Impossible validate json configuration file : " , str(e))
         sys.exit(1)
 
-    res, file_content = JsonReader.read_json_file(CONFIGURATION_FILE_PATH)
+    res, file_content = JsonReader.read_json_file(CONFIG_FILE_PATH)
     if res is False:
         print("[ERROR] Impossible to read json file\nShutdown")
         sys.exit(1)
