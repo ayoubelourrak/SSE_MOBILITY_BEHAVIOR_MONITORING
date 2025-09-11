@@ -57,6 +57,7 @@ class PreparationSystem:
                                  args=('0.0.0.0', 5000), daemon=True)
         listener_thread.start()
         while JsonIO.get_instance().receive() is False:
+            print('it is sleeping')
             time.sleep(3)
         while True:
             # Get received raw session
