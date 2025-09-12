@@ -1,19 +1,190 @@
 {
-    "type": "object",
-    "properties": {
-      "shopping_items_number" : {"type": "number"},
-      "sport_items_number" : {"type": "number"},
-      "cooking_items_number" : {"type": "number"}, 
-      "gaming_items_number" : {"type": "number"},
-      "shopping_average" : {"type": "number"},
-      "sport_average" : {"type": "number"},
-      "cooking_average" : {"type": "number"},
-      "gaming_average" : {"type": "number"}, 
-      "threshold" : {"type": "number"},
-      "evaluation": {
-        "type": "string",
-        "enum": ["balanced", "not balanced", ""]
-      }
+  "type": "object",
+  "properties": {
+    "shopping_items_number": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of shopping activity instances"
     },
-    "required": ["shopping_items_number", "shopping_average", "sport_items_number", "sport_average", "cooking_items_number", "cooking_average", "gaming_items_number", "gaming_average", "threshold", "evaluation"]
-  }
+    "sport_items_number": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of sport activity instances"
+    },
+    "cooking_items_number": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of cooking activity instances"
+    },
+    "gaming_items_number": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of gaming activity instances"
+    },
+    "total_instances": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of instances across all classes"
+    },
+    "shopping_proportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Proportion of shopping instances (0-1)"
+    },
+    "sport_proportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Proportion of sport instances (0-1)"
+    },
+    "cooking_proportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Proportion of cooking instances (0-1)"
+    },
+    "gaming_proportion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Proportion of gaming instances (0-1)"
+    },
+    "is_balanced": {
+      "type": "boolean",
+      "description": "Whether the classes are balanced within the specified tolerance"
+    },
+    "balancing_tolerance_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Balancing tolerance percentage used for the analysis"
+    },
+    "average_instances_per_class": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Average number of instances per class"
+    },
+    "tolerance_absolute": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Absolute tolerance value (calculated from percentage)"
+    },
+    "min_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Minimum threshold for balanced classes"
+    },
+    "max_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum threshold for balanced classes"
+    },
+    "evaluation": {
+      "type": "string",
+      "enum": ["balanced", "not balanced", ""]
+    },
+    "deviations_from_average": {
+      "type": "object",
+      "properties": {
+        "Shopping": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Absolute deviation from average for Shopping class"
+        },
+        "Sport": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Absolute deviation from average for Sport class"
+        },
+        "Cooking": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Absolute deviation from average for Cooking class"
+        },
+        "Gaming": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Absolute deviation from average for Gaming class"
+        }
+      },
+      "required": ["Shopping", "Sport", "Cooking", "Gaming"],
+      "additionalProperties": false,
+      "description": "Absolute deviations from average for each class"
+    },
+    "percentage_deviations": {
+      "type": "object",
+      "properties": {
+        "Shopping": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage deviation from average for Shopping class"
+        },
+        "Sport": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage deviation from average for Sport class"
+        },
+        "Cooking": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage deviation from average for Cooking class"
+        },
+        "Gaming": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage deviation from average for Gaming class"
+        }
+      },
+      "required": ["Shopping", "Sport", "Cooking", "Gaming"],
+      "additionalProperties": false,
+      "description": "Percentage deviations from average for each class"
+    },
+    "max_deviation_percent": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum percentage deviation among all classes"
+    },
+    "classes_needing_more_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Shopping", "Sport", "Cooking", "Gaming"]
+      },
+      "uniqueItems": true,
+      "description": "List of classes that need more data to achieve balance"
+    },
+    "classes_with_excess_data": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Shopping", "Sport", "Cooking", "Gaming"]
+      },
+      "uniqueItems": true,
+      "description": "List of classes that have excess data beyond tolerance"
+    }
+  },
+  "required": [
+    "shopping_items_number",
+    "sport_items_number",
+    "cooking_items_number",
+    "gaming_items_number",
+    "total_instances",
+    "shopping_proportion",
+    "sport_proportion",
+    "cooking_proportion",
+    "gaming_proportion",
+    "is_balanced",
+    "balancing_tolerance_percent",
+    "average_instances_per_class",
+    "tolerance_absolute",
+    "min_threshold",
+    "max_threshold",
+    "deviations_from_average",
+    "percentage_deviations",
+    "max_deviation_percent",
+    "classes_needing_more_data",
+    "classes_with_excess_data",
+    "evaluation"
+  ]
+}

@@ -42,6 +42,7 @@ class SegregationSystem:
 
         self.segregation_system_config = segregation_system_config
 
+    # TODO gestire meglio il fallimento a posto di un False
     def save_config(self):
         config_path = os.path.join(os.path.abspath('.'), 'data', 'segregation_system_config.json')
         try:
@@ -65,11 +66,11 @@ class SegregationSystem:
         segregation_system_ip = self.segregation_system_config['segregation_system_ip']
         segregation_system_port = self.segregation_system_config['segregation_system_port']
         listener = Thread(target=JsonIO.get_instance().listener,
-                          args=(segregation_system_ip, segregation_system_port))
-        listener.setDaemon(True)
+                          args=(segregation_system_ip, segregation_system_port), daemon=True)
         listener.start()
 
         while JsonIO.get_instance().get_queue().get(block=True) is False:
+            print('it is sleeping')
             time.sleep(3)
         while True:
             stage = self.segregation_system_config['stage']
@@ -87,6 +88,7 @@ class SegregationSystem:
                 if collector.store_prepared_session(received_json):
                     collector.increment_session_counter()
                 else:
+                    print(f"Failed to store prepared session: {received_json['_id']}")
                     continue
 
                 if not collector.check_max_sessions():
@@ -103,6 +105,7 @@ class SegregationSystem:
                 dataset = collector.load_dataset()
                 if dataset is None:
                     print("Unable to load the database")
+                    # TODO bisognerebbe evitare un ciclo infinito
                     continue
 
                 # Generate balancing chart and report

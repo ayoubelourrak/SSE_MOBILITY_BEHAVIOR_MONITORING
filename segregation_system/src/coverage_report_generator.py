@@ -1,6 +1,8 @@
 import os
 import json
 import plotly.graph_objects as go
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 from jsonschema import validate, ValidationError
 
 class CoverageReportGenerator:
@@ -30,43 +32,110 @@ class CoverageReportGenerator:
             environment_and_small_scatter.append(
                 prepared_session['features']['environment_and_small_scatter'])
 
-        # Generate radar chart
-        categories = ['maximum_pressure_ts','minimum_pressure_ts','median_pressure_ts',
-                    'mean_absolute_deviation_pressure_ts', 'activity_and_small_scatter',
-                    'environment_and_small_scatter']
+        feature_lists = [
+            maximum_pressure_ts,
+            minimum_pressure_ts,
+            median_pressure_ts,
+            mean_absolute_deviation_pressure_ts,
+            activity_and_small_scatter,
+            environment_and_small_scatter
+        ]
+
+        feature_names = [
+            'Maximum Pressure TS',
+            'Minimum Pressure TS',
+            'Median Pressure TS',
+            'Mean Abs Dev Pressure TS',
+            'Activity & Small Scatter',
+            'Environment & Small Scatter'
+        ]
+
+        # Convert feature lists to array and transpose
+        X = np.array(feature_lists).T
+        X_original = X.copy()
+
+        # Scale features to 0-1 range for better radar visualization
+        scaler = MinMaxScaler()
+        X_scaled = scaler.fit_transform(X)
 
         fig = go.Figure()
 
-        # maximum_pressure_ts is used because every list has the same numbers
-        # of elements
-        for i in range(len(maximum_pressure_ts)):
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+
+        # Add scatter points for each feature
+        for feat_idx, feature_name in enumerate(feature_names):
+            feature_color = colors[feat_idx % len(colors)]
+
+            # Get all scaled values for this feature
+            feature_values = X_scaled[:, feat_idx]
+
+            # Create scatter plot for this feature
             fig.add_trace(go.Scatterpolar(
-            r=[maximum_pressure_ts[i], minimum_pressure_ts[i], median_pressure_ts[i],
-               mean_absolute_deviation_pressure_ts[i], activity_and_small_scatter[i],
-               environment_and_small_scatter[i]],
-            theta=categories,
-            fill='toself',
+                r=feature_values,
+                theta=[feature_name] * len(feature_values),
+                mode='markers',
+                name=feature_name,
+                marker=dict(
+                    size=6,
+                    color=feature_color,
+                    opacity=0.7
+                ),
+                hovertemplate=f'<b>{feature_name}</b><br>Scaled Value: %{{r:.3f}}<extra></extra>'
             ))
+
+        # Calculate original min/max for each feature
+        feature_info = []
+        coverage_stats = {}
+
+        for i, name in enumerate(feature_names):
+            original_values = X_original[:, i]
+            min_val = np.min(original_values)
+            max_val = np.max(original_values)
+            coverage = np.ptp(X_scaled[:, i])
+
+            feature_info.append(f"{name}: [{min_val:.2f}, {max_val:.2f}]")
+            coverage_stats[name] = coverage
+
+        # Create legend text with min/max ranges
+        legend_text = '<br>'.join(feature_info)
 
         fig.update_layout(
             polar=dict(
                 radialaxis=dict(
-                visible=True,
-                range=[0, 6]
-                )),
-            showlegend=False
-            )
+                    visible=True,
+                    range=[-0.1, 1.1],
+                    tickvals=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+                    tickfont=dict(size=10)
+                ),
+                angularaxis=dict(tickfont=dict(size=12))
+            ),
+            title=dict(text="Features Coverage", x=0.5, font=dict(size=16)),
+            annotations=[
+                dict(
+                    text=f"<b>Feature Ranges (Original Values):</b><br>{legend_text}",
+                    showarrow=False,
+                    xref="paper", yref="paper",
+                    x=1.02, y=0.8, xanchor="left", yanchor="top",
+                    bgcolor="rgba(255,255,255,0.9)",
+                    bordercolor="black", borderwidth=1,
+                    font=dict(size=10)
+                )
+            ],
+            width=1500, height=900,
+            margin=dict(r=150),
+            showlegend=True
+        )
 
         chart_path = os.path.join(os.path.abspath('.'), 'data', 'coverage', 'coverage_chart.png')
-        # save bar chart in a png image
+        # save chart as png image
         try:
             fig.write_image(chart_path)
+            print('Coverage chart generated')
         except Exception as e:
             print(e)
             print('Failed to save the coverage chart')
             return None
 
-        print('Coverage chart generated')
 
         # Get the info for the report
         info = dict()
