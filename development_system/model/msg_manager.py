@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, request
 import requests
 
+from config.constants import CLASSIFIER_DIRECTORY_PATH
 from model.msg_configuration import MessageConfiguration
 from marshmallow import Schema, fields
 
@@ -67,7 +68,7 @@ class MessageManager:
 
     def send_classifier(self , uuid):
         url = f"http://{self._configuration.host_dest_ip}:{self._configuration.host_dest_port}/deploy"
-        file_path = os.getenv("CLASSIFIER_DIRECTORY_PATH") + uuid + ".joblib"
+        file_path = CLASSIFIER_DIRECTORY_PATH + uuid + ".joblib"
         file = {'file': open(file_path,'rb')}
 
         try:

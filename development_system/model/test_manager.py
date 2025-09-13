@@ -1,5 +1,6 @@
 import os
 
+from config.constants import HYPER_PARAMS_FILE_PATH, PICKED_CLASSIFIER_FILE_PATH
 from model.classifier import Classifier
 from utils.json_reader import JsonReader
 from generator.test_report_generator import TestReportGenerator
@@ -12,7 +13,7 @@ class TestManager:
         self._classifier = Classifier()
         self._validation_data = Dataset.get_data("validation")
         self._test_data = Dataset.get_data("test")
-        read_result, file_content = JsonReader.read_json_file(os.getenv("PICKED_CLASSIFIER_FILE_PATH"))
+        read_result, file_content = JsonReader.read_json_file(PICKED_CLASSIFIER_FILE_PATH)
         if not read_result:
             return
         self._picked_uuid = file_content["uuid"]
@@ -31,7 +32,7 @@ class TestManager:
         }
 
     def generate_test_report(self):
-        read_result, file_content = JsonReader.read_json_file(os.getenv("HYPER_PARAMS_FILE_PATH"))
+        read_result, file_content = JsonReader.read_json_file(HYPER_PARAMS_FILE_PATH)
         if not read_result:
             return
         self._result["tolerance"] = file_content["validation-tolerance"]

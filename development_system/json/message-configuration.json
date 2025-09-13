@@ -4,7 +4,7 @@
         "port" : 6000
     },
     "dest":{
-        "ip" : "10.8.0.8",
-        "port" : 6001
+        "ip" : "production-system",
+        "port" : 6000
     }
 }

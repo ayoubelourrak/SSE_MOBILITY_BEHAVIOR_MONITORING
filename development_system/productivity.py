@@ -3,12 +3,14 @@ import os
 import time
 import signal
 from dotenv import load_dotenv
+
+from config.constants import CONFIG_FILE_PATH
 from controller.development_system import DevelopmentSystem
 from utils.json_reader import JsonReader
 
 def handler(signum, frame):
     print("[INFO] Received ctrl + c signal, interrupt and reset application")
-    JsonReader.update_json_file(os.getenv("CONFIG_FILE_PATH") , "stage" , "waiting")
+    JsonReader.update_json_file(CONFIG_FILE_PATH , "stage" , "waiting")
     sys.exit(1)
 
 signal.signal(signal.SIGINT, handler)

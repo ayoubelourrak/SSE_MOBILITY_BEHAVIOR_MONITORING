@@ -31,11 +31,11 @@ class DevelopmentSystem:
     def run(self, productivity = False):
 
         if productivity is False:
-            run_thread = Thread(target=MessageManager.get_instance().start_server)
-            run_thread.setDaemon(True)
+            run_thread = Thread(target=MessageManager.get_instance().start_server, daemon=True)
             run_thread.start()
 
         while MessageManager.get_instance().get_queue().get(block=True) is False:
+            print("is is sleeping")
             time.sleep(3)
 
         while True:

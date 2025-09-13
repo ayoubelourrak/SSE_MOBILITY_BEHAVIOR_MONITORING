@@ -3,6 +3,8 @@ import math
 from itertools import product
 from operator import itemgetter
 
+from config.constants import HYPER_PARAMS_FILE_PATH, BEST_CLASSIFIER_FILE_PATH, PICKED_CLASSIFIER_FILE_PATH, \
+    CLASSIFIER_DIRECTORY_PATH
 from model.classifier import Classifier
 from model.classifier_configuration import ClassifierConfiguration
 from utils.json_reader import JsonReader
@@ -18,7 +20,7 @@ class ValidationManager:
         self._best_classifiers = []
 
     def get_setting_list(self):
-        read_result , file_content = JsonReader.read_json_file(os.getenv("HYPER_PARAMS_FILE_PATH"))
+        read_result , file_content = JsonReader.read_json_file(HYPER_PARAMS_FILE_PATH)
         if not read_result:
             return
         iterations_number = file_content["iterations-number"]
@@ -95,17 +97,17 @@ class ValidationManager:
 
     def clear_classifier_directory(self , uuid):
         classifier_file_name = uuid + ".joblib"
-        for classifier in os.listdir(os.getenv("CLASSIFIER_DIRECTORY_PATH")):
+        for classifier in os.listdir(CLASSIFIER_DIRECTORY_PATH):
             if classifier != classifier_file_name:
-                os.remove(os.getenv("CLASSIFIER_DIRECTORY_PATH") + classifier)
+                os.remove(CLASSIFIER_DIRECTORY_PATH + classifier)
 
     def pick_classifier(self, uuid):
-        read_result, file_content = JsonReader.read_json_file(os.getenv("BEST_CLASSIFIER_FILE_PATH"))
+        read_result, file_content = JsonReader.read_json_file(BEST_CLASSIFIER_FILE_PATH)
         if not read_result:
             return
 
         for classifier in file_content:
             if classifier["uuid"] == uuid:
-                JsonReader.write_json_file(os.getenv("PICKED_CLASSIFIER_FILE_PATH") , classifier)
+                JsonReader.write_json_file(PICKED_CLASSIFIER_FILE_PATH , classifier)
 
         self.clear_classifier_directory(uuid)

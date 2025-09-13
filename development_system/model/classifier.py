@@ -5,6 +5,8 @@ import joblib
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.exceptions import ConvergenceWarning, DataConversionWarning
+
+from config.constants import HYPER_PARAMS_FILE_PATH, CLASSIFIER_DIRECTORY_PATH
 from utils.json_reader import JsonReader
 from model.classifier_configuration import ClassifierConfiguration
 
@@ -39,7 +41,7 @@ class Classifier:
             ):
             print("[DEBUG] Update config file")
             JsonReader.update_json_file(
-                os.getenv("HYPER_PARAMS_FILE_PATH"),
+                HYPER_PARAMS_FILE_PATH,
                 "iterations-number" , 
                 configuration.iterations_number
             )
@@ -47,9 +49,9 @@ class Classifier:
         self._classifier.set_params(**configuration.to_dict())
 
     def save(self , uuid):
-        file_path = os.getenv("CLASSIFIER_DIRECTORY_PATH") + uuid + ".joblib"
+        file_path = CLASSIFIER_DIRECTORY_PATH + uuid + ".joblib"
         joblib.dump(self._classifier, file_path)
 
     def load(self, uuid):
-        file_path = file_path = os.getenv("CLASSIFIER_DIRECTORY_PATH") + uuid + ".joblib"
+        file_path = CLASSIFIER_DIRECTORY_PATH + uuid + ".joblib"
         self._classifier = joblib.load(file_path)
