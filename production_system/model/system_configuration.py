@@ -1,11 +1,12 @@
 import os
 
+from config.constants import CONFIG_FILE_PATH
 from utils.json_reader import JsonReader
 
 class SystemConfiguration:
 
     def __init__(self):
-        read_result, file_content = JsonReader.read_json_file(os.getenv("CONFIG_FILE_PATH"))
+        read_result, file_content = JsonReader.read_json_file(CONFIG_FILE_PATH)
         if not read_result:
             return
         self.evaluation_phase = file_content["evaluation-phase"]

@@ -4,6 +4,8 @@ import time
 import os
 from threading import Thread
 from dotenv import load_dotenv
+
+from config.constants import CLASSIFIER_FILE_PATH
 from model.msg_configuration import MessageConfiguration
 from flask import Flask, request
 from model.prepared_session import PreparedSession
@@ -75,12 +77,13 @@ class MessageManager:
         if dest == "EVALUATION":
             uri = "http://" + self._configuration.evaluation_system_ip + ":" + str(self._configuration.evaluation_system_port) + "/classifierLabels"
         elif dest == "CLIENT":
-            uri = "http://" + self._configuration.client_system_ip + ":" + str(self._configuration.client_system_port) + "/"
+            uri = "http://" + self._configuration.client_system_ip + ":" + str(self._configuration.client_system_port) + "/label"
             print(f"[INFO] Send result to client at url : {uri}")
         else:
             uri = "http://" + self._configuration.messaging_system_ip + ":" + str(self._configuration.messaging_system_port) + "/"
             print(f"[INFO] Send result to messaging at url : {uri}")
-            return
+            print(f"[INFO] The data is {data}")
+            return # TODO cosa fare di questo return
         try:
             res = r.post(uri , json=data, timeout=5)
             if res.status_code == 200:
@@ -110,7 +113,7 @@ def deploy():
         return errors, 400
 
     f = request.files['file']
-    f.save(os.getenv("CLASSIFIER_FILE_PATH"))
+    f.save(CLASSIFIER_FILE_PATH)
     receive_thread = Thread(target=MessageManager.get_instance().send_classifier)
     receive_thread.start()
     return {}, 200

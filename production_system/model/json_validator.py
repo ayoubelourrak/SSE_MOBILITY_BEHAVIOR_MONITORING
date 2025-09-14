@@ -1,16 +1,18 @@
 import os
 
 from jsonschema import validate, ValidationError
+
+from config.constants import SCHEMAS_DIRECTORY
 from utils.json_reader import JsonReader
 class JsonValidator:
 
     @staticmethod
     def validate_schemas():
-        file_list = os.listdir(os.getenv("SCHEMAS_DIRECTORY"))
+        file_list = os.listdir(SCHEMAS_DIRECTORY)
 
         for file in file_list:
             actual_file_path = "./json/" + file.split("-schema")[0] + ".json"
-            schema_path = os.getenv("SCHEMAS_DIRECTORY") + file
+            schema_path = SCHEMAS_DIRECTORY + file
 
             read_result , file_content = JsonReader.read_json_file(actual_file_path)
             if not read_result:
