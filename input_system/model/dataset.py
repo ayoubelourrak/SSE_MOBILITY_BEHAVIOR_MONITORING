@@ -74,25 +74,21 @@ class Dataset:
                         "uuid": sample["uuid"],
                         "environment" : sample["environment"]
                     }
-            print("[DEBUG] Sto per mandare : " , req_body)
             msg_manager.send_data(req_body)
             req_body = {
                         "uuid": sample["uuid"],
                         "calendar" : sample["activity"]
                     }
-            print("[DEBUG] Sto per mandare : " , req_body)
             msg_manager.send_data(req_body)
             req_body = {
                         "uuid": sample["uuid"],
                         "pressure_detected" : sample["label"]
                     }
-            print("[DEBUG] Sto per mandare : " , req_body)
             msg_manager.send_data(req_body)
             req_body = {
                         "uuid": sample["uuid"],
                         "time_series" : sample["ts"]
                     }
-            print("[DEBUG] Sto per mandare : " , req_body)
             msg_manager.send_data(req_body)
         except Exception as e:
             raise e
@@ -124,13 +120,13 @@ class Dataset:
                 if (not(Dataset.check_is_empty(elaborated_data)) and len(elaborated_data[activity]) > 0):
                     sample = elaborated_data[activity][0]
                     try:
-                        time.sleep(interval)
+                        #time.sleep(interval)
                         Dataset.send_data(sample)
                         counter += 1
                     except Exception as e:
                         raise e
                     elaborated_data[activity].pop(0)
-        print("[INFO] All samples sended, coounter " , counter)
+        print("[INFO] All samples sent, counter " , counter)
 
     @staticmethod
     def send_real_data(interval, prob):
@@ -162,9 +158,9 @@ class Dataset:
                     key = "ts"
                 sample[key] = None
             try:
-                time.sleep(interval)
+                #time.sleep(interval)
                 Dataset.send_data(sample)
             except Exception as e:
                 raise e
-        print("[INFO] All samples sended")
+        print("[INFO] All samples sent")
     

@@ -1,6 +1,5 @@
 {
-    "situation": "ideal",
     "probability-of-error": 10,
-    "interval": 5,
+    "interval": 1,
     "stage": "waiting"
 }

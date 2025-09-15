@@ -1,0 +1,108 @@
+services:
+  input-system:
+    build:
+      context: ./input_system
+      dockerfile: Dockerfile
+    container_name: input-system
+    ports:
+      - "6002:6000"
+    environment:
+      - TZ=Europe/Rome
+      - INGESTION_SERVICE_URL=http://ingestion-system:4000
+      - SITUATION=ideal                                           #Must be "ideal" or "real"
+    networks:
+      - app-network
+    depends_on:
+      - ingestion-system
+    restart: unless-stopped
+
+  ingestion-system:
+    build:
+      context: ./ingestion_system
+      dockerfile: Dockerfile
+    container_name: ingestion-system
+    ports:
+      - "6003:4000"
+    environment:
+      - TZ=Europe/Rome
+      - OPERATIVE_MODE=production                              #Must be "development" or "production"
+      - EVALUATION=0                                            # 0 fo false and 1 for true
+    networks:
+      - app-network
+    depends_on:
+      - preparation-system
+    restart: unless-stopped
+
+  preparation-system:
+    build:
+      context: ./preparation_system
+      dockerfile: Dockerfile
+    container_name: preparation-system
+    ports:
+      - "6004:5000"
+    environment:
+      - TZ=Europe/Rome
+      - OPERATIVE_MODE=production                              #Must be "development" or "production"
+    networks:
+      - app-network
+    depends_on:
+      - segregation-system
+    restart: unless-stopped
+
+  segregation-system:
+    build:
+      context: ./segregation_system
+      dockerfile: Dockerfile
+    container_name: segregation-system
+    ports:
+      - "6005:6000"
+    environment:
+      - TZ=Europe/Rome
+      - MAX_SESSIONS=100
+    networks:
+      - app-network
+    depends_on:
+      - development-system
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  development-system:
+    build:
+      context: ./development_system
+      dockerfile: Dockerfile
+    container_name: development-system
+    ports:
+      - "6006:6000"
+    environment:
+      - TZ=Europe/Rome
+      - LAYER_RANGE=1,3
+      - NEURON_RANGE=4,128
+    networks:
+      - app-network
+    depends_on:
+      - production-system
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  production-system:
+    build:
+      context: ./production_system
+      dockerfile: Dockerfile
+    container_name: production-system
+    ports:
+      - "6007:6000"
+    volumes:
+      - ../Data/classifier:/app/classifiers
+    environment:
+      - TZ=Europe/Rome
+      - EVALUATION_PHASE=0                                        # 0 fo false and 1 for true
+      - CLASSIFIER_DEPLOYED=1                                     # 0 fo false and 1 for true
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

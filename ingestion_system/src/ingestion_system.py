@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 import time
@@ -31,7 +32,7 @@ class IngestionSystem:
             logging.error('Error during the Ingestion System initialization phase')
             sys.exit(1)
         self.last_uuid_received = None
-        self.evaluation = False
+        self.evaluation = bool(int(os.getenv('EVALUATION')))
         self.sessions_to_evaluation = 0
         self.sessions_to_produce = 0
         self.operative_mode = self.configuration.operative_mode
@@ -42,7 +43,7 @@ class IngestionSystem:
         Runs the Ingestion System main process
         """
         # TODO i log.info non funzionano metti i print
-        logging.info('Operative Mode: %s', self.operative_mode)
+        print(f'[+] The configuration is valid, {self.operative_mode} mode')
 
         # Create an instance of RawSessionsStore
         raw_sessions_store = RawSessionsStore()
@@ -54,7 +55,6 @@ class IngestionSystem:
         #while JsonIO.get_instance().receive() is False:
         #    time.sleep(3)
         while True:
-            print('waiting for ingestion events')
             # Wait for a new record
             received_record = JsonIO.get_instance().receive()
             print('received record: {}'.format(received_record))
@@ -71,8 +71,7 @@ class IngestionSystem:
                         uuid = received_record['uuid']
                     else:
                         # Check on the previous session because of a missing sample
-                        logging.warning('Raw Session %s missing sample detected', \
-                                        self.last_uuid_received)
+                        print(f'Raw Session {self.last_uuid_received} missing sample detected')
                         session_complete = raw_sessions_store. \
                                             is_session_complete(uuid=self.last_uuid_received, \
                                                                 last_missing_sample=True, \
@@ -84,13 +83,13 @@ class IngestionSystem:
                     if session_complete:
                         # If the session is complete there is no need for the next record to test"
                         self.last_uuid_received = None
-                        logging.info('Raw Session %s complete', uuid)
+                        print(f'Raw Session {uuid} complete')
 
                         # Load Raw Session from the Data Store
                         raw_session = raw_sessions_store.load_raw_session(uuid=uuid)
 
                         if raw_session['uuid'] is None:
-                            # TODO metti un messaggio
+                            print(f'Raw Session {self.last_uuid_received} failed to be loaded')
                             continue
 
                         # Delete Raw Session from the Data Store
@@ -107,7 +106,7 @@ class IngestionSystem:
                                                 dest_system="preparation")
 
                             if sent_to_preparation:
-                                logging.info('Raw Session %s sent to the Preparation System', uuid)
+                                print(f'Raw Session {uuid} sent to the Preparation System')
 
                             if self.evaluation:
                                 # Send Raw Session to the Evaluation System
@@ -117,25 +116,24 @@ class IngestionSystem:
                                                         send( data=label, \
                                                             dest_system="evaluation")
                                 if sent_to_evaluation:
-                                    logging.info('Label %s sent to the evaluation System', \
-                                                 raw_session["pressure_detected"])
+                                    print(f'Label {raw_session['pressure_detected']} sent to the evaluation System')
                                     self.sessions_to_evaluation += 1
-                                    logging.info('Labels to sent to the evaluation System: %s', \
-                                                 self.sessions_to_evaluation)
+                                    print(f'Labels to sent to the evaluation System: {self.sessions_to_evaluation}')
                                     if self.sessions_to_evaluation == self.configuration.evaluation_window:
                                         self.sessions_to_evaluation = 0
                                         self.evaluation = False
-                                        logging.info('Evaluation phase ended')
+                                        print('Evaluation phase ended')
                             else:
                                 if self.operative_mode == 'production':
                                     self.sessions_to_produce += 1
-                                    logging.info('Sessions executed: %s', self.sessions_to_produce)
+                                    print(f'Sessions executed: {self.sessions_to_produce}')
 
                                     # TODO sistema le dimensioni del window
                                     if self.sessions_to_produce == self.configuration.production_window:
                                         self.evaluation = True
                                         self.sessions_to_produce = 0
                                         logging.info('Entering in evaluation phase')
+                                        print('Entering in evaluation phase')
                         else:
                             logging.error('Raw Session %s discarded, threshold not satisfied', \
                                          uuid)
@@ -150,4 +148,3 @@ class IngestionSystem:
                             self.last_uuid_received = None
                 else:
                     self.last_uuid_received = received_record['uuid']
-            print('fine giro')

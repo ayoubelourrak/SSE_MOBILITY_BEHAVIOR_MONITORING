@@ -1,9 +1,6 @@
 {
     "type": "object",
     "properties": {
-      "situation" : {
-        "type" : "string"
-      },
       "probability-of-error" : {
         "type" : "integer"
       },
@@ -11,5 +8,5 @@
         "type" : "number"
       }
     },
-    "required": ["situation", "probability-of-error", "interval"]
+    "required": ["probability-of-error", "interval"]
   }

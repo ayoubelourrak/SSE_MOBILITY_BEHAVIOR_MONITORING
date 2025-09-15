@@ -1,5 +1,4 @@
 {
-  "operative_mode" : "development",
   "preparation_system_ip" : "preparation-system",
   "preparation_system_port" : 5000,
   "evaluation_system_ip": "evaluation-system",

@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import logging
@@ -30,7 +31,7 @@ class PreparationSystemConfiguration:
             self.segregation_system_ip = json_conf['segregation_system_ip']
             self.production_system_port = json_conf['production_system_port']
             self.segregation_system_port = json_conf['segregation_system_port']
-            self.operative_mode = json_conf['operative_mode']
+            self.operative_mode = os.getenv('OPERATIVE_MODE')
             self.max_value = int(json_conf['max_value'])
             self.min_value = int(json_conf['min_value'])
             self.features = json_conf['features'] #TODO aggiungi anche le altre features

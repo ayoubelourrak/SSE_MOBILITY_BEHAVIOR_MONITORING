@@ -79,13 +79,11 @@ class JsonIO:
         try:
             if dest_system == "preparation":
                 connection_string = f'http://{self.configuration.preparation_system_ip}:{self.configuration.preparation_system_port}/json'
-                print('Preparation system connection is ' + connection_string)
-            elif dest_system == "evaluation":
+            else:
                 connection_string = f'http://{self.configuration.evaluation_system_ip}:{self.configuration.evaluation_system_port}/expertLabels'
-                print('Evaluation system connection is ' + connection_string)
             response = post(url=connection_string, json=data, timeout=3)
         except exceptions.RequestException:
-            logging.error('%s unreachable', connection_string)
+            logging.error('%s unreachable', dest_system)
             sys.exit(1)
 
         if response.status_code != 200:

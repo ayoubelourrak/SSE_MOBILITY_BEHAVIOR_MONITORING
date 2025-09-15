@@ -46,7 +46,6 @@ class JsonIO:
 
     def send(self, ip, port, endpoint, data):
         url = f'http://{ip}:{port}/' + endpoint
-        print(f'Sending {url}')
         response = None
         try:
             response = post(url, json=data, timeout=10.0)

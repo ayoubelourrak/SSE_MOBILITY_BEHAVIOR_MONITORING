@@ -44,14 +44,12 @@ class MessageManager:
 
     def send_to_main(self):
         self._queue.put(True, block=True)
-        print('New Dataset received')
 
     def send_data(self, json):
         #uri = "http://" + self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port) + "/record"
         ingestion_url = (os.getenv('INGESTION_SERVICE_URL',
                         self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port)) +
                         "/record")
-        print(ingestion_url)
         try:
             res = requests.post(ingestion_url, json=json, timeout=3)
             if res.status_code != 200:
@@ -74,4 +72,5 @@ def post_label():
 
     if errors:
         return errors, 400
-    print("[INFO] Received Label")
+    print(f"[INFO] Received Label: {request.json}")
+    return {}, 200

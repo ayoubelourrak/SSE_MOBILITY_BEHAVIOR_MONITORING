@@ -1,10 +1,6 @@
 {
   "type": "object",
   "properties": {
-    "operative_mode": {
-      "type": "string",
-      "enum": ["development", "production"]
-    },
     "segregation_system_ip": {
       "type": "string"
     },
@@ -80,7 +76,6 @@
     }
   },
   "required": [
-  "operative_mode",
   "segregation_system_ip",
   "segregation_system_port",
   "production_system_ip",

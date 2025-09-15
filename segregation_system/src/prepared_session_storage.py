@@ -27,7 +27,7 @@ class PreparedSessionStorage:
     def check_max_sessions(self):
 
         # If the sessions number is big enough a learning session set is completed
-        max_sessions = self.segregation_system_config['max_sessions']
+        max_sessions = int(os.getenv('MAX_SESSIONS'))
         if self.prepared_session_counter >= max_sessions:
             self.prepared_session_counter = 0
             return True

@@ -13,29 +13,7 @@
     },
     "validation-tolerance": {
       "type": "number"
-    },
-    "hidden-layer-size-range": {
-      "type": "array",
-      "items": [
-        {
-          "type": "integer"
-        },
-        {
-          "type": "integer"
-        }
-      ]
-    },
-    "hidden-neuron-per-layer-range": {
-        "type": "array",
-        "items": [
-          {
-            "type": "integer"
-          },
-          {
-            "type": "integer"
-          }
-        ]
-      }
+    }
   },
-  "required": ["iterations-number","variation-step","overfitting-threshold","validation-tolerance","hidden-layer-size-range","hidden-neuron-per-layer-range"]
+  "required": ["iterations-number","variation-step","overfitting-threshold","validation-tolerance"]
 }

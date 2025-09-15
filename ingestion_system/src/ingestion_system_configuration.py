@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+
 from utility.json_handler import JsonHandler
 
 
@@ -36,4 +38,4 @@ class IngestionSystemConfiguration:
             self.missing_samples_threshold = int(json_conf['missing_samples_threshold'])
             self.production_window= int(json_conf['production_window'])
             self.evaluation_window = int(json_conf['evaluation_window'])
-            self.operative_mode = json_conf['operative_mode']
+            self.operative_mode = os.getenv('OPERATIVE_MODE')

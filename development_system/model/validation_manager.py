@@ -25,8 +25,8 @@ class ValidationManager:
             return
         iterations_number = file_content["iterations-number"]
         overfitting_threshold = file_content["overfitting-threshold"]
-        hidden_layer_size_range = file_content["hidden-layer-size-range"]
-        hidden_neuron_range = file_content["hidden-neuron-per-layer-range"]
+        hidden_layer_size_range = list(map(int,os.getenv("LAYER_RANGE").split(",")))
+        hidden_neuron_range = list(map(int,os.getenv("NEURON_RANGE").split(",")))
 
         exponent = int(math.log2(hidden_neuron_range[1]))
         layer_number = hidden_layer_size_range[1]

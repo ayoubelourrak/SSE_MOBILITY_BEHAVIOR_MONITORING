@@ -6,5 +6,5 @@ if __name__ == '__main__':
     try:
         preparation_system.run()
     except KeyboardInterrupt:
-        print("Ingestion App terminated")
+        print("Preparation App terminated")
         sys.exit(0)    

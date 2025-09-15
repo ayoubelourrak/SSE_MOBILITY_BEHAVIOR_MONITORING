@@ -20,8 +20,8 @@ class TrainingManager:
         if not read_result:
             return
         #iterations_number = file_content["iterations-number"]
-        hidden_layer_size_range = file_content["hidden-layer-size-range"]
-        hidden_neuron_range = file_content["hidden-neuron-per-layer-range"]
+        hidden_layer_size_range = list(map(int,os.getenv("LAYER_RANGE").split(",")))
+        hidden_neuron_range = list(map(int,os.getenv("NEURON_RANGE").split(",")))
 
         # get the average hyperparameters
         average_layers = int((hidden_layer_size_range[1] + hidden_layer_size_range[0]) / 2)
