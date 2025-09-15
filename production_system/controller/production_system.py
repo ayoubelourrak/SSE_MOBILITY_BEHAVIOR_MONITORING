@@ -18,12 +18,16 @@ class ProductionSystem:
         self._configuration.update_classifier(True)
 
     def run(self):
+        classify_controller = ClassifyController()
         run_thread = Thread(target=MessageManager.get_instance().start_server, daemon=True)
         run_thread.start()
 
         while MessageManager.get_instance().get_queue().get(block=True) is False:
             print("it is sleeping")
             time.sleep(3)
+
+        if self._configuration.classifier_deployed:
+            classify_controller.load_classifier()
 
         while True:
 
@@ -41,8 +45,9 @@ class ProductionSystem:
             else:
                 prepared_session = MessageManager.get_instance().get_queue().get(block=True)
                 print(f"Prepared session received: {prepared_session}")
-                classify_controller = ClassifyController(prepared_session)
+                classify_controller.load_prepared_session(prepared_session)
                 classification_result = classify_controller.classify()
+                print(classify_controller.to_string())
                 print("[INFO] classification result: " , classification_result)
 
             

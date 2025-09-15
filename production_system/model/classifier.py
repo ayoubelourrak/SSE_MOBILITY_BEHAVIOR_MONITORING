@@ -24,10 +24,13 @@ class Classifier:
         self._classifier = joblib.load(file_path)
 
     def predict_label(self , net_input):
-        print("[DEBUG] input " , net_input)
+        print(f"[DEBUG] input: {net_input}")
         res = self._classifier.predict(pd.DataFrame(net_input))
-        print("[DEBUG] predict result: " , res)
+        print(f"[DEBUG] predict result: {res}")
         return res
+
+    def to_string(self):
+        return str(self._classifier)
 
     @staticmethod
     def get_instance():
