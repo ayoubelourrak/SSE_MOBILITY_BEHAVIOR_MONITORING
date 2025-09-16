@@ -66,7 +66,7 @@ class MessageManager:
 
     def send_to_main(self):
         self._queue.put(True, block=True)
-        print('New Classifier received')
+        print('Start received')
 
     def send_prepared_session(self , received_prepared_session):
         prepared_session = PreparedSession(received_prepared_session)

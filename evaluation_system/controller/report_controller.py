@@ -1,3 +1,6 @@
+import os
+import random
+
 from controller.label_store_controller import LabelStore
 from model.evaluation_report import EvaluationReport
 from model.msg_manager import MessageManager
@@ -76,7 +79,11 @@ class ReportController:
                 print("Please review the evaluation report.")
                 print("The JSON and PNG files have been generated.")
                 print("\nIs this evaluation report acceptable?")
-                response = input("Enter 'y' for yes, 'n' for no: ").lower().strip()
+                no_stop = bool(int(os.getenv('NO_STOP')))
+                if no_stop:
+                    response = random.choices(['y', 'n'], weights=[0.99, 0.01], k=1)[0]
+                else:
+                    response = input("Enter 'y' for yes, 'n' for no: ").lower().strip()
 
                 if response in ['y', 'yes']:
                     return True

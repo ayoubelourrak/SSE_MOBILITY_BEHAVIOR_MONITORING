@@ -1,3 +1,5 @@
+import os
+import random
 from threading import Thread
 import sys
 import time
@@ -28,11 +30,12 @@ class DevelopmentSystem:
         self._configuration.stage = new_state
         self._configuration.update_stage()
 
-    def run(self, productivity = False):
+    def run(self):
 
-        if productivity is False:
-            run_thread = Thread(target=MessageManager.get_instance().start_server, daemon=True)
-            run_thread.start()
+        no_stop = bool(int(os.getenv("NO_STOP")))
+
+        run_thread = Thread(target=MessageManager.get_instance().start_server, daemon=True)
+        run_thread.start()
 
         while MessageManager.get_instance().get_queue().get(block=True) is False:
             print("is is sleeping")
@@ -54,7 +57,7 @@ class DevelopmentSystem:
                 self.update_stage("set_nr_iter")
 
             if self._configuration.stage == "set_nr_iter":
-                if productivity is True:
+                if no_stop is True:
                     inserted_iterations = 100
                 else:
                     inserted_iterations = int(input("[HUMAN] Insert number of iterations\n"))
@@ -76,8 +79,9 @@ class DevelopmentSystem:
                 print("[INFO] Exported chart, waiting for human to check learning plot")
                 print("[HUMAN] Wait for checking the learning_plot")
 
-                if productivity is True:
-                    learning_res = "y"
+                if no_stop:
+                    learning_res = random.choices(['y', 'n'], weights=[0.99, 0.01], k=1)[0]
+                    print(f"Randomly generated evaluation: {learning_res}")
                 else:
                     learning_res = input("Is the number of iterations fine? (Y/n)\n")
 
@@ -92,13 +96,19 @@ class DevelopmentSystem:
                 validation_controller = ValidationController()
                 validation_controller.validate_classifier()
                 validation_controller.generate_validation_report()
-                uuid = input("[HUMAN] Insert the UUID of the winner classifier\n")
-
-                if uuid == "":
-                    self.update_stage("set_avg_hyp")
+                if no_stop:
+                    uuid = validation_controller.select_classifier(False, no_stop)
+                    if not uuid:
+                        self.update_stage("set_avg_hyp")
+                    else:
+                        self.update_stage("gen_tst_rep")
                 else:
-                    validation_controller.select_classifier(uuid)
-                    self.update_stage("gen_tst_rep")
+                    uuid = input("[HUMAN] Insert the UUID of the winner classifier\n")
+                    if uuid == "":
+                        self.update_stage("set_avg_hyp")
+                    else:
+                        validation_controller.select_classifier(uuid, no_stop)
+                        self.update_stage("gen_tst_rep")
 
             if self._configuration.stage == "gen_tst_rep":
                 test_controller = TestController()
@@ -106,8 +116,9 @@ class DevelopmentSystem:
                 test_controller.generate_test_report()
 
                 print("[INFO] Test Report Generated, waiting for human")
-                if productivity is True:
-                    test_res = "y"
+                if no_stop:
+                    test_res = random.choices(['y', 'n'], weights=[0.99, 0.1], k=1)[0]
+                    print(f"Randomly generated evaluation: {test_res}")
                 else:
                     test_res = input("[HUMAN] Is the test passed? (Y/n)\n")
 
@@ -115,9 +126,6 @@ class DevelopmentSystem:
                     self.update_stage("snd_clsfr")
                 elif test_res == "n" or test_res == "N":
                     self.update_stage("ask_cnfg")
-
-                if productivity is True:
-                    break
 
             if self._configuration.stage == "ask_cnfg":
                 print("[WARN] Test not passed, needed new config")

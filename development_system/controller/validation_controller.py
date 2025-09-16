@@ -11,5 +11,5 @@ class ValidationController:
     def generate_validation_report(self):
         self._manager.evaluate_validation_result()
 
-    def select_classifier(self , uuid):
-        self._manager.pick_classifier(uuid)
+    def select_classifier(self , uuid, no_stop):
+        return self._manager.pick_classifier(uuid, no_stop)

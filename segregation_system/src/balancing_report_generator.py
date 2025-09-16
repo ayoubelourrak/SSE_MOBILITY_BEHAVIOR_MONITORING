@@ -8,7 +8,7 @@ class BalancingReportGenerator:
     def __init__(self):
         pass
 
-    def generate_chart(self, dataset, balancing_tolerance=5.0):
+    def generate_chart(self, dataset, balancing_tolerance=10.0):
 
         items = ['Shopping', 'Sport', 'Cooking', 'Gaming']
         values = [0,0,0,0]
@@ -156,10 +156,17 @@ class BalancingReportGenerator:
     # TODO gestire meglio gli errori
     def generate_report(self, info):
 
-        # Handle human interaction
-        print("Analize 'balancing_chart.png'")
-        print("Answer only 'balanced' or 'not balanced'")
-        evaluation = input('> ')
+        no_stop = bool(int(os.getenv('NO_STOP')))
+
+        if no_stop:
+            # Get value from the info
+            evaluation = 'balanced' if info["is_balanced"] else 'not balanced'
+            print(f"evaluation given by the info: {evaluation}")
+        else:
+            # Handle human interaction
+            print("Analize 'balancing_chart.png'")
+            print("Answer only 'balanced' or 'not balanced'")
+            evaluation = input('> ')
         if evaluation == 'balanced':
             info['evaluation'] = 'balanced'
         else:

@@ -101,13 +101,30 @@ class ValidationManager:
             if classifier != classifier_file_name:
                 os.remove(CLASSIFIER_DIRECTORY_PATH + classifier)
 
-    def pick_classifier(self, uuid):
+    def pick_classifier(self, uuid, no_stop):
         read_result, file_content = JsonReader.read_json_file(BEST_CLASSIFIER_FILE_PATH)
         if not read_result:
-            return
+            return None
 
-        for classifier in file_content:
-            if classifier["uuid"] == uuid:
-                JsonReader.write_json_file(PICKED_CLASSIFIER_FILE_PATH , classifier)
+        picked_classifier = None
+        if no_stop:
+            if file_content:
+                picked_classifier = file_content[0]
+                print("UUID is false, selecting the first classifier.")
+            else:
+                print("No classifiers found in the file.")
+                return None
+        else:
+            # Search for the classifier with the given uuid
+            for classifier in file_content:
+                if classifier["uuid"] == uuid:
+                    picked_classifier = classifier
+                    break
 
-        self.clear_classifier_directory(uuid)
+        if picked_classifier:
+            JsonReader.write_json_file(PICKED_CLASSIFIER_FILE_PATH, picked_classifier)
+            self.clear_classifier_directory(uuid)
+        else:
+            print(f"Classifier with UUID '{uuid}' not found.")
+
+        return picked_classifier["uuid"]
