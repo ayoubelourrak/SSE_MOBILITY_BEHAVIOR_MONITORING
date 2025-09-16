@@ -29,7 +29,11 @@ class RawSessionsStore:
 
         if self.open_connection() and self.create_table():
             print('[+] sqlite3 connection established and raw_session table initialized')
-            pass
+            # Enable WAL mode for better concurrency
+            self.conn.execute("PRAGMA journal_mode=WAL")
+            self.conn.execute("PRAGMA synchronous=NORMAL")
+            self.conn.execute("PRAGMA cache_size=10000")
+            self.conn.execute("PRAGMA temp_store=MEMORY")
         else:
             logging.error('sqlite3 initialize failed')
             sys.exit(1)
@@ -238,25 +242,23 @@ class RawSessionsStore:
 
     def update_raw_session(self, record: dict, column_to_set: str) -> bool:
         """
-        Updates a Raw Session in the database upon receiving a record 
+        Updates a Raw Session in the database upon receiving a record
         belonging to a session already in the database
         :param record: dictionary representing the received record to store
         :param column_to_set: column to update
         :return: True if the update is successful. False otherwise.
         """
         try:
+            cursor = self.conn.cursor()
             if column_to_set == 'time_series':
-                for i in range(1, NUM_COLUMNS + 1):
-                    column_name = column_to_set + '_' + str(i)
-                    query = 'UPDATE raw_session SET ' + column_name + ' = ? WHERE uuid = ?'
-                    cursor = self.conn.cursor()
-                    cursor.execute(query, (record[column_to_set][i-1], record['uuid']))
-                    self.conn.commit()
+                columns = ', '.join([f'time_series_{i} = ?' for i in range(1, NUM_COLUMNS + 1)])
+                query = f'UPDATE raw_session SET {columns} WHERE uuid = ?'
+                params = record[column_to_set] + [record['uuid']]
+                cursor.execute(query, params)
             else:
                 query = 'UPDATE raw_session SET ' + column_to_set + ' = ? WHERE uuid = ?'
-                cursor = self.conn.cursor()
                 cursor.execute(query, (record[column_to_set], record['uuid']))
-                self.conn.commit()
+            self.conn.commit()
         except sqlite3.Error as e:
             logging.error('sqlite3 "update_raw_session" error %s', e)
             return False

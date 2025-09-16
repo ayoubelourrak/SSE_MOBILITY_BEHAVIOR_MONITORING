@@ -2,6 +2,7 @@ import sys
 import logging
 from typing import Any
 from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 import queue
 from flask import Flask, request
 from requests import post, exceptions
@@ -23,6 +24,7 @@ class JsonIO:
         """
         self.app = Flask(__name__)
         self.received_records_queue = queue.Queue()
+        self.thread_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="record_processor")
         try:
             self.configuration = IngestionSystemConfiguration(CONFIG_PATH, CONFIG_SCHEMA_PATH)
         except ValidationError:
@@ -112,15 +114,14 @@ log.setLevel(logging.ERROR)
 @app.post('/record')
 def post_json():
     """
-    Flask view function that handles requests related to records 
+    Flask view function that handles requests related to records
     sent from the different data sources
     """
     if request.json is None:
         return {'error': 'No record received'}, 500
 
     received_record = request.json
-    new_thread = Thread(target=JsonIO.get_instance().put_received_record, args=(received_record, ))
-    new_thread.start()
+    JsonIO.get_instance().thread_pool.submit(JsonIO.get_instance().put_received_record, received_record)
 
     return {}, 200
 
