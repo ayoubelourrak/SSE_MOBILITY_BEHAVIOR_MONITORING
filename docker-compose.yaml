@@ -1,4 +1,19 @@
 services:
+  orchestrator-system:
+    build:
+      context: ./orchestrator_system
+      dockerfile: Dockerfile
+    container_name: orchestrator-system
+    ports:
+      - "6001:6000"
+    environment:
+      - TZ=Europe/Rome
+    networks:
+      - app-network
+    depends_on:
+      - input-system
+    restart: no
+
   input-system:
     build:
       context: ./input_system
@@ -26,7 +41,7 @@ services:
     environment:
       - TZ=Europe/Rome
       - OPERATIVE_MODE=production                              #Must be "development" or "production"
-      - EVALUATION=0                                            # 0 fo false and 1 for true
+      - EVALUATION=1                                            # 0 fo false and 1 for true
     networks:
       - app-network
     depends_on:
@@ -97,8 +112,26 @@ services:
       - ../Data/classifier:/app/classifiers
     environment:
       - TZ=Europe/Rome
-      - EVALUATION_PHASE=0                                        # 0 fo false and 1 for true
+      - EVALUATION_PHASE=1                                        # 0 fo false and 1 for true
       - CLASSIFIER_DEPLOYED=1                                     # 0 fo false and 1 for true
+    depends_on:
+      - evaluation-system
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  evaluation-system:
+    build:
+      context: ./evaluation_system
+      dockerfile: Dockerfile
+    container_name: evaluation-system
+    ports:
+      - "6008:6000"
+    environment:
+      - TZ=Europe/Rome
+    stdin_open: true
+    tty:
+      true
     networks:
       - app-network
     restart: unless-stopped
