@@ -25,8 +25,7 @@ class InputSystem:
 
     def run(self):
 
-        run_thread = Thread(target=MessageManager.get_instance().start_server)
-        run_thread.setDaemon(True)
+        run_thread = Thread(target=MessageManager.get_instance().start_server, daemon=True)
         run_thread.start()
 
         while MessageManager.get_instance().get_queue().get(block=True) is False:
