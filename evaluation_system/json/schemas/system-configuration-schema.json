@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties":{
+    "report-size": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of label pairs needed to generate a report"
+    },
+    "max-errors": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Maximum allowed errors in evaluation report"
+    },
+    "max-consecutive-errors": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Maximum allowed consecutive errors in evaluation report"
+    },
+    "db-name": {
+      "type": "string",
+      "description": "SQLite database filename"
+    }
+  },
+  "required": ["report-size", "max-errors", "max-consecutive-errors", "db-name"],
+  "additionalProperties": false
+}

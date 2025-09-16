@@ -1,0 +1,6 @@
+{
+  "report-size": 10,
+  "max-errors": 4,
+  "max-consecutive-errors": 2,
+  "db-name": "evaluation.db"
+}
