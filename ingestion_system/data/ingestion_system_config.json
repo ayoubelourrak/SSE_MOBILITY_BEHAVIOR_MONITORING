@@ -2,7 +2,7 @@
   "preparation_system_ip" : "preparation-system",
   "preparation_system_port" : 5000,
   "evaluation_system_ip": "evaluation-system",
-  "evaluation_system_port": 6008,
+  "evaluation_system_port": 6000,
   "production_window": 5,
   "evaluation_window": 5,
   "missing_samples_threshold": 1,

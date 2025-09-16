@@ -116,7 +116,7 @@ class IngestionSystem:
                                                         send( data=label, \
                                                             dest_system="evaluation")
                                 if sent_to_evaluation:
-                                    print(f'Label {raw_session['pressure_detected']} sent to the evaluation System')
+                                    print(f'Label {raw_session["pressure_detected"]} sent to the evaluation System')
                                     self.sessions_to_evaluation += 1
                                     print(f'Labels to sent to the evaluation System: {self.sessions_to_evaluation}')
                                     if self.sessions_to_evaluation == self.configuration.evaluation_window:
