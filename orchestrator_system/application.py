@@ -1,4 +1,6 @@
 import sys
+import time
+
 import requests
 from dotenv import load_dotenv
 from model.json_validator import JsonValidator
@@ -21,6 +23,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     for key in file_content.keys():
+        time.sleep(3)
         print(f"[INFO] Sending start message to {key}")
         uri = f"http://{file_content[key]['ip']}:{str(file_content[key]['port'])}/start"
         try:

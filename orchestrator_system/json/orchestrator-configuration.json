@@ -1,30 +1,30 @@
 {
-    "client-system": {
-        "ip": "127.0.0.1",
-        "port": 6002
-    },
-    "ingestion-system": {
-        "ip": "127.0.0.1",
-        "port": 6003
-    },
-    "preparation-system": {
-        "ip": "127.0.0.1",
-        "port": 6004
-    },
-    "segregation-system": {
-        "ip": "127.0.0.1",
-        "port": 6005
-    },
-    "development-system": {
-        "ip": "127.0.0.1",
-        "port": 6006
+    "evaluation-system": {
+        "ip": "evaluation-system",
+        "port": 6000
     },
     "production-system": {
-        "ip": "127.0.0.1",
-        "port": 6007
+        "ip": "production-system",
+        "port": 6000
     },
-    "evaluation-system": {
-        "ip": "127.0.0.1",
-        "port": 6008
+    "development-system": {
+        "ip": "development-system",
+        "port": 6000
+    },
+    "segregation-system": {
+        "ip": "segregation-system",
+        "port": 6000
+    },
+    "preparation-system": {
+        "ip": "preparation-system",
+        "port": 5000
+    },
+    "ingestion-system": {
+        "ip": "ingestion-system",
+        "port": 4000
+    },
+    "client-system": {
+        "ip": "input-system",
+        "port": 6000
     }
 }
