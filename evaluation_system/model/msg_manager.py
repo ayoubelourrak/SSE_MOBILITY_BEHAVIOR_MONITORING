@@ -1,3 +1,5 @@
+import sys
+
 from model.msg_configuration import MessageConfiguration
 from utils.json_reader import JsonReader
 import queue
@@ -6,6 +8,7 @@ from threading import Thread
 import requests
 from marshmallow import Schema, fields
 from model.label import Label
+from datetime import datetime
 
 class LabelSchema(Schema):
     uuid = fields.String(required=True)
@@ -75,6 +78,7 @@ class MessageManager:
 
             if response.status_code == 200:
                 print("[+] Successfully sent evaluation report to orchestrator")
+                self.send_log('all')
             else:
                 print(f"[ERROR] Failed to send report to orchestrator. Status: {response.status_code}")
 
@@ -82,6 +86,25 @@ class MessageManager:
             print(f"[ERROR] Network error sending report to orchestrator: {e}")
         except Exception as e:
             print(f"[ERROR] Error sending report to orchestrator: {e}")
+
+    def send_log(self, uuid:str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': 'evaluation',
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://{self.msg_config.host_dest_ip}:{self.msg_config.host_dest_port}/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = requests.post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
+        print('[INFO] Stopping the system')
+        sys.exit(0)
+
 
 app = MessageManager.get_instance().get_app()
 

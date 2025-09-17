@@ -1,4 +1,6 @@
 {
+  "input_system_ip" : "input-system",
+  "input_system_port" : 6000,
   "preparation_system_ip" : "preparation-system",
   "preparation_system_port" : 5000,
   "evaluation_system_ip": "evaluation-system",

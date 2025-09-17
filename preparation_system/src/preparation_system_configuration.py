@@ -27,6 +27,8 @@ class PreparationSystemConfiguration:
                               "configuration: JSON file is not valid")
                 raise ValueError("Preparation System configuration failed")
             # Add JSON attributes to current object
+            self.input_system_ip = json_conf['input_system_ip']
+            self.input_system_port = json_conf['input_system_port']
             self.production_system_ip = json_conf['production_system_ip']
             self.segregation_system_ip = json_conf['segregation_system_ip']
             self.production_system_port = json_conf['production_system_port']

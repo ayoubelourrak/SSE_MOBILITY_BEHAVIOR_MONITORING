@@ -57,6 +57,8 @@ class IngestionSystem:
         while True:
             # Wait for a new record
             received_record = JsonIO.get_instance().receive()
+            if isinstance(received_record, bool):
+                continue
             print('received record: {}'.format(received_record))
 
             last_missing_sample = False

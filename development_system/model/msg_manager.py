@@ -1,10 +1,12 @@
 import os
 import queue
 import logging
+import sys
 from threading import Thread
 from dotenv import load_dotenv
 from flask import Flask, request
 import requests
+from datetime import datetime
 
 from config.constants import CLASSIFIER_DIRECTORY_PATH
 from model.msg_configuration import MessageConfiguration
@@ -70,6 +72,7 @@ class MessageManager:
         url = f"http://{self._configuration.host_dest_ip}:{self._configuration.host_dest_port}/deploy"
         file_path = CLASSIFIER_DIRECTORY_PATH + uuid + ".joblib"
         file = {'file': open(file_path,'rb')}
+        self.send_log('all')
 
         try:
             r = requests.post(url, files=file , timeout=3)
@@ -81,6 +84,22 @@ class MessageManager:
         except TimeoutError:
             print("[ERROR] Timeout")
             raise TimeoutError
+
+    def send_log(self, uuid:str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': 'development',
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://{self._configuration.host_log_ip}:{self._configuration.host_log_port}/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = requests.post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
 
 app = MessageManager.get_instance().get_app()
 

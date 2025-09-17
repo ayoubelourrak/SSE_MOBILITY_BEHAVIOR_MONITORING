@@ -81,7 +81,7 @@ class ReportController:
                 print("\nIs this evaluation report acceptable?")
                 no_stop = bool(int(os.getenv('NO_STOP')))
                 if no_stop:
-                    response = random.choices(['y', 'n'], weights=[0.99, 0.01], k=1)[0]
+                    response = random.choices(['y', 'n'], weights=[0.01, 0.99], k=1)[0]
                 else:
                     response = input("Enter 'y' for yes, 'n' for no: ").lower().strip()
 

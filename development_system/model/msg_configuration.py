@@ -14,3 +14,5 @@ class MessageConfiguration:
         self.host_src_port = file_content["src"]["port"]
         self.host_dest_ip = file_content["dest"]["ip"]
         self.host_dest_port = file_content["dest"]["port"]
+        self.host_log_ip = file_content["log"]["ip"]
+        self.host_log_port = file_content["log"]["port"]

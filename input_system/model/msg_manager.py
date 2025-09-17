@@ -5,6 +5,8 @@ from threading import Thread
 from dotenv import load_dotenv
 from flask import Flask, request
 import requests
+
+from log_service.log_service import RecordTimestampManager
 from model.msg_configuration import MessageConfiguration
 from marshmallow import Schema, fields
 
@@ -23,6 +25,8 @@ class MessageManager:
         self._configuration = MessageConfiguration()
         self._app = Flask(__name__)
         self._queue = queue.Queue()
+        self.database = RecordTimestampManager()
+
     @staticmethod
     def get_instance():
         if MessageManager._instance is None:
@@ -45,15 +49,17 @@ class MessageManager:
     def send_to_main(self):
         self._queue.put(True, block=True)
 
+    def send_log(self, data):
+        self.database.add_timestamp(data['uuid'], data['system_source'], data['timestamp'])
+
     def send_data(self, json):
         #uri = "http://" + self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port) + "/record"
-        ingestion_url = (os.getenv('INGESTION_SERVICE_URL',
-                        self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port)) +
-                        "/record")
+        ingestion_url = "http://" + self._configuration.host_dest_ip + ":" + str(self._configuration.host_dest_port) + "/record"
         try:
             res = requests.post(ingestion_url, json=json, timeout=3)
             if res.status_code != 200:
                 raise Exception("[ERROR] Not received 200")
+            self.database.add_timestamp(json['uuid'], 'input_system')
         except Exception as e:
             raise e
 app = MessageManager.get_instance().get_app()
@@ -73,4 +79,17 @@ def post_label():
     if errors:
         return errors, 400
     print(f"[INFO] Received Label: {request.json}")
+    return {}, 200
+
+@app.post("/evaluationReport")
+def post_evaluation_report():
+    print(f"[INFO] Received data from evaluation: {request.json}")
+    return {}, 200
+
+@app.post("/log")
+def post_log():
+    print(f"[INFO] Received Log: {request.json}")
+
+    receive_thread = Thread(target=MessageManager.get_instance().send_log, args=(request.json,))
+    receive_thread.start()
     return {}, 200

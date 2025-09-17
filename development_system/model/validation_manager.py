@@ -123,7 +123,7 @@ class ValidationManager:
 
         if picked_classifier:
             JsonReader.write_json_file(PICKED_CLASSIFIER_FILE_PATH, picked_classifier)
-            self.clear_classifier_directory(uuid)
+            self.clear_classifier_directory(picked_classifier["uuid"])
         else:
             print(f"Classifier with UUID '{uuid}' not found.")
 

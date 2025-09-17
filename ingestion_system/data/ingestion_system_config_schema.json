@@ -1,6 +1,12 @@
 {
   "type": "object",
   "properties": {
+    "input_system_ip": {
+      "type": "string"
+    },
+    "input_system_port": {
+      "type": "integer"
+    },
     "preparation_system_ip": {
       "type": "string"
     },
@@ -27,6 +33,8 @@
     }
   },
   "required": [
+    "input_system_ip",
+    "input_system_port",
     "preparation_system_ip",
     "preparation_system_port",
     "evaluation_system_ip",

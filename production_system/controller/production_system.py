@@ -44,6 +44,8 @@ class ProductionSystem:
                 self._update_stage()
             else:
                 prepared_session = MessageManager.get_instance().get_queue().get(block=True)
+                if isinstance(prepared_session, bool):
+                    continue
                 print(f"Prepared session received: {prepared_session}")
                 classify_controller.load_prepared_session(prepared_session)
                 classification_result = classify_controller.classify()

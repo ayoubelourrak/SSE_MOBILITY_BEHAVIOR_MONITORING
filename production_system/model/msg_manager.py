@@ -1,9 +1,11 @@
 import queue
 import logging
+import sys
 import time
 import os
 from threading import Thread
 from dotenv import load_dotenv
+from datetime import datetime
 
 from config.constants import CLASSIFIER_FILE_PATH
 from model.msg_configuration import MessageConfiguration
@@ -79,11 +81,13 @@ class MessageManager:
         elif dest == "CLIENT":
             uri = "http://" + self._configuration.client_system_ip + ":" + str(self._configuration.client_system_port) + "/label"
             print(f"[INFO] Send result to client at url : {uri}")
+            self.send_log(data['uuid'], 'production')
         else:
             uri = "http://" + self._configuration.messaging_system_ip + ":" + str(self._configuration.messaging_system_port) + "/"
             print(f"[INFO] Send result to messaging at url : {uri}")
             print(f"[INFO] The data is {data}")
-            return # TODO cosa fare di questo return
+            self.send_log('all', 'production_deploy')
+            return
         try:
             res = r.post(uri , json=data, timeout=5)
             if res.status_code == 200:
@@ -92,6 +96,23 @@ class MessageManager:
                 print(f"[ERROR] Impossible to send labels to {dest} system")
         except TimeoutError:
             print(f"[ERROR] {dest} system is unavailable, timeout")
+
+    def send_log(self, uuid:str, system_source:str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': system_source,
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://{self._configuration.client_system_ip}:{self._configuration.client_system_port}/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = r.post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
+
 
 
 app = MessageManager.get_instance().get_app()

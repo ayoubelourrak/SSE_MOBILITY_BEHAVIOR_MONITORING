@@ -31,6 +31,8 @@ class IngestionSystemConfiguration:
 
             # Add JSON attributes to current object
             self.db_name = json_conf['db_name']
+            self.input_system_ip = json_conf['input_system_ip']
+            self.input_system_port = json_conf['input_system_port']
             self.preparation_system_ip = json_conf['preparation_system_ip']
             self.evaluation_system_ip = json_conf['evaluation_system_ip']
             self.preparation_system_port = json_conf['preparation_system_port']

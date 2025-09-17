@@ -1,3 +1,4 @@
+from datetime import datetime
 import sys
 import logging
 from typing import Any
@@ -81,6 +82,7 @@ class JsonIO:
         try:
             if dest_system == "preparation":
                 connection_string = f'http://{self.configuration.preparation_system_ip}:{self.configuration.preparation_system_port}/json'
+                self.send_log(data['uuid'])
             else:
                 connection_string = f'http://{self.configuration.evaluation_system_ip}:{self.configuration.evaluation_system_port}/expertLabels'
             response = post(url=connection_string, json=data, timeout=3)
@@ -94,6 +96,23 @@ class JsonIO:
             return False
 
         return True
+
+    def send_log(self, uuid:str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': 'ingestion',
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://{self.configuration.input_system_ip}:{self.configuration.input_system_port}/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
+
 
     def listen(self, ip: str, port: int) -> None:
         """

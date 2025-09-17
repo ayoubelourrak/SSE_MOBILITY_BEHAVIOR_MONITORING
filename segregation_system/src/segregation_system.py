@@ -120,6 +120,7 @@ class SegregationSystem:
                     # Dataset balanced, move to coverage stage
                     self.segregation_system_config['stage'] = 'coverage'
                     self.save_config()
+                    JsonIO.get_instance().send_log('all', 'balancing')
                     continue
 
                 # The system need a new reconfiguration
@@ -184,6 +185,7 @@ class SegregationSystem:
                     # The coverage is ok, move to learning stage
                     self.segregation_system_config['stage'] = 'learning'
                     self.save_config()
+                    JsonIO.get_instance().send_log('all', 'coverage')
                     continue
 
                 # The system need a new reconfiguration

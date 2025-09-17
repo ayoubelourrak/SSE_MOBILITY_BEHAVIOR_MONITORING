@@ -1,4 +1,6 @@
 {
+  "input_system_ip" : "input-system",
+  "input_system_port" : 6000,
   "segregation_system_ip": "segregation-system",
   "segregation_system_port": 6000,
   "production_system_ip": "production-system",

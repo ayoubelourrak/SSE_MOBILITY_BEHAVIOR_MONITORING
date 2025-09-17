@@ -25,9 +25,21 @@
                 }
             },
             "required": ["ip" , "port"]
+        },
+        "log" : {
+            "type" : "object",
+            "properties": {
+                "ip":{
+                    "type" : "string"
+                },
+                "port":{
+                    "type" : "integer"
+                }
+            },
+            "required": ["ip" , "port"]
         }
 
     },
-    "required" : [ "src" , "dest"]
+    "required" : [ "src" , "dest", "log"]
 
 }

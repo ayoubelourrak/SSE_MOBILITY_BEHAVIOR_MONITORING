@@ -6,5 +6,9 @@
     "dest":{
         "ip" : "production-system",
         "port" : 6000
+    },
+    "log":{
+        "ip" : "input-system",
+        "port" : 6000
     }
 }

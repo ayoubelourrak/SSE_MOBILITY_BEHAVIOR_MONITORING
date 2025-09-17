@@ -1,6 +1,12 @@
 {
   "type": "object",
   "properties": {
+    "input_system_ip": {
+      "type": "string"
+    },
+    "input_system_port": {
+      "type": "integer"
+    },
     "segregation_system_ip": {
       "type": "string"
     },
@@ -76,6 +82,8 @@
     }
   },
   "required": [
+  "input_system_ip",
+  "input_system_port",
   "segregation_system_ip",
   "segregation_system_port",
   "production_system_ip",

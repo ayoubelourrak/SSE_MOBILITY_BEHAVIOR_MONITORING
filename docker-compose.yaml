@@ -21,15 +21,16 @@ services:
     container_name: input-system
     ports:
       - "6002:6000"
+    volumes:
+      - ../Data/input/data/logs:/app/logs
     environment:
       - TZ=Europe/Rome
-      - INGESTION_SERVICE_URL=http://ingestion-system:4000
       - SITUATION=ideal                                           #Must be "ideal" or "real"
     networks:
       - app-network
     depends_on:
       - ingestion-system
-    restart: unless-stopped
+    restart: no
 
   ingestion-system:
     build:
@@ -40,8 +41,8 @@ services:
       - "6003:4000"
     environment:
       - TZ=Europe/Rome
-      - OPERATIVE_MODE=development                              #Must be "development" or "production"
-      - EVALUATION=0                                            # 0 fo false and 1 for true
+      - OPERATIVE_MODE=production                              #Must be "development" or "production"
+      - EVALUATION=1                                            # 0 fo false and 1 for true
     networks:
       - app-network
     depends_on:
@@ -57,7 +58,7 @@ services:
       - "6004:5000"
     environment:
       - TZ=Europe/Rome
-      - OPERATIVE_MODE=development                              #Must be "development" or "production"
+      - OPERATIVE_MODE=production                              #Must be "development" or "production"
     networks:
       - app-network
     depends_on:
@@ -76,7 +77,7 @@ services:
       - ../Data/segregation/data/coverage:/app/data/coverage
     environment:
       - TZ=Europe/Rome
-      - MAX_SESSIONS=100
+      - MAX_SESSIONS=350
       - NO_STOP=1                                                   # 0 for stop&go, 1 for no interaction
     networks:
       - app-network
@@ -121,8 +122,8 @@ services:
       - ../Data/classifier:/app/classifiers
     environment:
       - TZ=Europe/Rome
-      - EVALUATION_PHASE=0                                        # 0 fo false and 1 for true
-      - CLASSIFIER_DEPLOYED=0                                     # 0 fo false and 1 for true
+      - EVALUATION_PHASE=1                                        # 0 fo false and 1 for true
+      - CLASSIFIER_DEPLOYED=1                                     # 0 fo false and 1 for true
     depends_on:
       - evaluation-system
     networks:
@@ -136,6 +137,8 @@ services:
     container_name: evaluation-system
     ports:
       - "6008:6000"
+    volumes:
+      - ../Data/evaluation/data/reports:/app/reports
     environment:
       - TZ=Europe/Rome
       - NO_STOP=1                                                   # 0 for stop&go, 1 for no interaction

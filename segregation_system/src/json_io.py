@@ -1,8 +1,10 @@
 import queue
+import sys
 from threading import Thread
 from flask import Flask, request
 from requests import post, exceptions
 import logging
+from datetime import datetime
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
@@ -60,8 +62,25 @@ class JsonIO:
                 error_message = res['error']
             print(f'Sending Error: {error_message}')
             return False
-
+        self.send_log('all', 'segregation')
         return True
+
+    def send_log(self, uuid:str, system_source: str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': system_source,
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://input-system:6000/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
+
 
 
 app = JsonIO.get_instance().get_app()

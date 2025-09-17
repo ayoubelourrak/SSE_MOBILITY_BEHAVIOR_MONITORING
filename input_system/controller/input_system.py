@@ -37,3 +37,6 @@ class InputSystem:
             else:
                 Dataset.send_real_data(self._configuration.interval, self._configuration.probability)
             break
+
+        while True:
+            pass

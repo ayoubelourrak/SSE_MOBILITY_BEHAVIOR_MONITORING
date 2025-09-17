@@ -7,6 +7,7 @@ from flask import Flask, request
 from requests import post, exceptions
 from jsonschema import ValidationError
 from src.preparation_system_configuration import PreparationSystemConfiguration
+from datetime import datetime
 
 CONFIG_PATH = './data/preparation_system_config.json'
 CONFIG_SCHEMA_PATH = './data/preparation_system_config_schema.json'
@@ -101,10 +102,27 @@ class JsonIO:
                 error_message = response.json()['error']
                 print(f'[-] Error: {error_message}')
                 return False
+            self.send_log(json_to_send['_id'])
         except exceptions.RequestException as e:
             print(f'[-] Connection Error (endpoint unreachable): {e}')
             sys.exit(1)
         return True
+
+    def send_log(self, uuid:str) -> None:
+        data = {
+            'uuid': uuid,
+            'system_source': 'preparation',
+            'timestamp': datetime.now().isoformat()
+        }
+        connection_string = f'http://{self.configuration.input_system_ip}:{self.configuration.input_system_port}/log'
+        print(f'[INFO] Send log: {data} to {connection_string}')
+        try:
+            response = post(url=connection_string, json=data, timeout=3)
+            if response.status_code != 200:
+                error_message = response.json()['error']
+                print(f'[ERROR] error: {error_message}')
+        except Exception as e:
+            print(f'[ERROR] log unreachable for {uuid} caused error: {e}')
 
 app = JsonIO.get_instance().app
 log = logging.getLogger('werkzeug')
