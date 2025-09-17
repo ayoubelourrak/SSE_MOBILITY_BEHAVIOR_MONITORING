@@ -153,7 +153,6 @@ class BalancingReportGenerator:
 
         return info
 
-    # TODO gestire meglio gli errori
     def generate_report(self, info):
 
         no_stop = bool(int(os.getenv('NO_STOP')))

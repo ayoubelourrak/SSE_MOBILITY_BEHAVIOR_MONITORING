@@ -98,7 +98,6 @@ class RawSessionsStore:
 
         return True
 
-    # TODO aggiungere print con informazioni/errori
     def get_record_type(self, record: dict) -> str:
         """
         Identifies the record type. The possible ones are calendar, pressure_detected, 
@@ -113,7 +112,6 @@ class RawSessionsStore:
                 return record_type
         return 'None'
 
-    # TODO aggiungere print con informazioni/errori
     def validate_schema_record(self, record: dict, record_type: str) -> bool:
         """
         Validates a received record given a pre-defined schema
@@ -159,7 +157,6 @@ class RawSessionsStore:
 
         return True
 
-    # TODO aggiungere print con informazioni/errori
     def store_record(self, record: dict) -> bool:
         """
         Stores the received record into the database after its type identification and validation.

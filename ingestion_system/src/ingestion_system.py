@@ -33,6 +33,7 @@ class IngestionSystem:
             sys.exit(1)
         self.last_uuid_received = None
         self.evaluation = bool(int(os.getenv('EVALUATION')))
+        self.evaluation_phase = bool(int(os.getenv('EVALUATION')))
         self.sessions_to_evaluation = 0
         self.sessions_to_produce = 0
         self.operative_mode = self.configuration.operative_mode
@@ -42,7 +43,6 @@ class IngestionSystem:
         """
         Runs the Ingestion System main process
         """
-        # TODO i log.info non funzionano metti i print
         print(f'[+] The configuration is valid, {self.operative_mode} mode')
 
         # Create an instance of RawSessionsStore
@@ -130,8 +130,7 @@ class IngestionSystem:
                                     self.sessions_to_produce += 1
                                     print(f'Sessions executed: {self.sessions_to_produce}')
 
-                                    # TODO sistema le dimensioni del window
-                                    if self.sessions_to_produce == self.configuration.production_window:
+                                    if self.sessions_to_produce == self.configuration.production_window and self.evaluation_phase:
                                         self.evaluation = True
                                         self.sessions_to_produce = 0
                                         logging.info('Entering in evaluation phase')

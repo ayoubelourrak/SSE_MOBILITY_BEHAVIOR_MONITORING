@@ -40,7 +40,6 @@ class SessionCleaning:
                     return False
         return True
 
-    # TODO da cambiare non mi piace questa interpolazione
     @staticmethod
     def interpolate_list(time_series, missing_value) -> None:
         """

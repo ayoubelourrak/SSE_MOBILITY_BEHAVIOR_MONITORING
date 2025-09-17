@@ -42,7 +42,6 @@ class SegregationSystem:
 
         self.segregation_system_config = segregation_system_config
 
-    # TODO gestire meglio il fallimento a posto di un False
     def save_config(self):
         config_path = os.path.join(os.path.abspath('.'), 'data', 'segregation_system_config.json')
         try:
@@ -105,7 +104,6 @@ class SegregationSystem:
                 dataset = collector.load_dataset()
                 if dataset is None:
                     print("Unable to load the database")
-                    # TODO bisognerebbe evitare un ciclo infinito
                     continue
 
                 # Generate balancing chart and report
