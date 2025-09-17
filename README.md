@@ -1,18 +1,13 @@
 # MOBILITY BEHAVIOUR evaluation
-Github repo for the Software Systems Engineering at Computer Engineering course at Unipi. Accademic year 23/24.
+Github repo for the Software Systems Engineering at Computer Engineering course at Unipi. Accademic year 24/25.
 
-### Dependencies installation
-- Create a virtual environment with your favourite virtual environment manager (venv in this case)
+### To run the system
+- start the factory
 ```bash
-python3 -m venv env
+docker compose up
 ```
 
-- Activate your virtualenv
+- stop the factory
 ```bash
-source env/bin/activate
-```
-
-- Install from requirements file
-```bash
-pip3 install -r requirements.txt
+docker compose down
 ```
